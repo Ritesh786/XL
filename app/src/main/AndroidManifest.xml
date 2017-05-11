@@ -4,6 +4,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.RECEIVE_SMS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" >
+    </uses-permission>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_logo"
@@ -19,8 +26,24 @@
         </activity>
         <activity
             android:name=".ReporterSection.BecomeReporter"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity android:name=".ReporterSection.ReporterLogin"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".ReporterSection.ReporterLogin" />
+        <activity android:name=".ReporterSection.Verifyotp" />
+        <activity
+            android:name=".ReporterSection.ReporterDashboard"
+            android:label="@string/title_activity_reporter_dashboard"
+            android:theme="@style/AppTheme"></activity>
+
+
+        <receiver android:name=".AutomaticSmsRead.SmsReceiver">
+        <intent-filter android:priority="99999" >
+            <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+        </intent-filter>
+    </receiver>
+
+
     </application>
+
+
 
 </manifest>
