@@ -15,6 +15,10 @@
         android:id="@+id/nav_item_becomereporter"
         />
 
+    <item android:title="Upload News"
+        android:id="@+id/nav_item_uploadnews"
+        />
+
     <item android:title="@string/hindi"
         android:id="@+id/nav_item_national"
      />

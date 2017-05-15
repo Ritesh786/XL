@@ -13,4 +13,14 @@
     tools:context="com.extralarge.fujitsu.xl.ReporterSection.ReporterDashboard"
     tools:showIn="@layout/app_bar_reporter_dashboard">
 
+
+    <FrameLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frame_trans">
+    </FrameLayout>
+
+
+
 </RelativeLayout>

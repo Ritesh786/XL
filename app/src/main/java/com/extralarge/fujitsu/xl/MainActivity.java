@@ -1,6 +1,8 @@
 package com.extralarge.fujitsu.xl;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,11 +12,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.extralarge.fujitsu.xl.ReporterSection.BecomeReporter;
+import com.extralarge.fujitsu.xl.ReporterSection.ReporterDashboard;
 import com.extralarge.fujitsu.xl.ReporterSection.ReporterLogin;
 
-public class MainActivity extends AppCompatActivity  {
+import java.security.Permission;
+
+public class MainActivity extends AbsRuntimePermission {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -22,19 +28,31 @@ public class MainActivity extends AppCompatActivity  {
     FragmentTransaction mFragmentTransaction;
     android.support.v7.widget.Toolbar toolbar;
 
+    String name;
+
+    UserSessionManager session;
+
+    private static final int REQUEST_PERMISSION = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        session = new UserSessionManager(getApplicationContext());
+        requestAppPermissions(new String[]{
+                               Manifest.permission.READ_CONTACTS,
+                               Manifest.permission.READ_SMS},
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+////                                Manifest.permission.WRITE_CONTACTS},
+                       R.string.msg, REQUEST_PERMISSION);
 
         /**
          *Setup the DrawerLayout and NavigationView
          */
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        mNavigationView = (NavigationView) findViewById(R.id.navigationview) ;
+        mNavigationView = (NavigationView) findViewById(R.id.navigationview);
 
         /**
          * Lets inflate the very first fragment
@@ -43,7 +61,7 @@ public class MainActivity extends AppCompatActivity  {
 
         mFragmentManager = getSupportFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.replace(R.id.containerView,new TabFragment()).commit();
+        mFragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
         /**
          * Setup click events on the Navigation View Items.
          */
@@ -52,31 +70,33 @@ public class MainActivity extends AppCompatActivity  {
         toolbar.setTitle("EXCEL");
         toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
+        Intent intent = getIntent();
+         name = intent.getStringExtra("session");
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 mDrawerLayout.closeDrawers();
 
 
-
                 if (menuItem.getItemId() == R.id.nav_item_home) {
                     FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.containerView,new TabFragment()).commit();
+                    fragmentTransaction.replace(R.id.containerView, new TabFragment()).commit();
                     toolbar.setTitle("EXCEL");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_national) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView,new PrimaryFragment()).commit();
-                   toolbar.setTitle("राष्ट्रीय");
+                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
+                    toolbar.setTitle("राष्ट्रीय");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
                 }
 
                 if (menuItem.getItemId() == R.id.nav_item_International) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView,new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
                     toolbar.setTitle("International");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -84,14 +104,14 @@ public class MainActivity extends AppCompatActivity  {
 
                 if (menuItem.getItemId() == R.id.nav_item_states) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView,new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
                     toolbar.setTitle("States");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
                 }
                 if (menuItem.getItemId() == R.id.nav_item_business) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView,new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
                     toolbar.setTitle("Business");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -99,7 +119,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 if (menuItem.getItemId() == R.id.nav_item_city) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView,new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
                     toolbar.setTitle("Cities");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -114,8 +134,19 @@ public class MainActivity extends AppCompatActivity  {
 
                 if (menuItem.getItemId() == R.id.nav_item_reporterlogin) {
 
+                    session.createUserLoginSession(name);
+
                     Intent reporterloginint = new Intent(MainActivity.this, ReporterLogin.class);
+                    reporterloginint.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    reporterloginint.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(reporterloginint);
+                }
+
+                if (menuItem.getItemId() == R.id.nav_item_uploadnews) {
+
+                    Intent dashboardintent = new Intent(MainActivity.this, ReporterDashboard.class);
+                    startActivity(dashboardintent);
+                    finish();
                 }
 
                 return false;
@@ -128,16 +159,48 @@ public class MainActivity extends AppCompatActivity  {
          */
 
 
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout, toolbar,R.string.app_name,
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name,
                 R.string.app_name);
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mDrawerToggle.syncState();
 
+    }
 
+    @Override
+    public void onPermissionsGranted(int requestCode) {
+
+        Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
 
     }
 
+//    class permission extends AbsRuntimePermission {
+//
+//            private static final int REQUEST_PERMISSION = 10;
+//
+//            @Override
+//            public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+//                super.onCreate(savedInstanceState, persistentState);
+//
+//
+//
+//                requestAppPermissions(new String[]{
+////                                Manifest.permission.READ_CONTACTS,
+//                                Manifest.permission.READ_SMS},
+////                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+////                                Manifest.permission.WRITE_CONTACTS},
+//                        R.string.msg, REQUEST_PERMISSION);
+//            }
+//
+//            @Override
+//            public void onPermissionsGranted(int requestCode) {
+//
+//                //Do anything when permisson granted
+//                Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
+//
+//            }
+//        }
 
-}
+
+    }

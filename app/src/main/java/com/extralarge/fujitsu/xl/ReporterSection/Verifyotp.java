@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.extralarge.fujitsu.xl.AutomaticSmsRead.SmsListener;
 import com.extralarge.fujitsu.xl.AutomaticSmsRead.SmsReceiver;
 import com.extralarge.fujitsu.xl.R;
+import com.extralarge.fujitsu.xl.UserSessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,22 +45,30 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
 
     AppCompatButton mverifyotpbtn;
 
-   // BroadcastReceiver receiver = null;
+    BroadcastReceiver receiver = null;
+
+    UserSessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verifyotp);
 
-//        IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-//        receiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//
-//            }
-//        };
-//
-//        registerReceiver(receiver,filter);
+        IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        filter.setPriority(2147483647);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context arr, Intent brr) {
+
+                processreceiver(arr,brr);
+
+            }
+        };
+
+        registerReceiver(receiver,filter);
+
+        session = new UserSessionManager(getApplicationContext());
 
         mverifyotptext = (EditText) findViewById(R.id.mobileotp);
 
@@ -73,8 +82,8 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
     {
         try
         {
-            String code = parseCode(message);
-            mverifyotptext.setText(code);
+           // String code = parseCode(message);
+            mverifyotptext.setText(message.substring(47));
         }
         catch (Exception e)
         {
@@ -82,7 +91,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
     }
 
     private String parseCode(String message) {
-        Pattern p = Pattern.compile("\\b\\d{4}\\b");
+        Pattern p = Pattern.compile("\\b\\d{6}\\b");
         Matcher m = p.matcher(message);
         String code = "";
             code = m.group(0);
@@ -91,29 +100,43 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
         return code;
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        unregisterReceiver(receiver);
-//    }
+    @Override
+    protected void onDestroy() {
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+        super.onDestroy();
+    }
 
-//    public void processreceiver(Context context , Intent intent){
-//
-//        Bundle data  = intent.getExtras();
-//
-//        Object[] pdus = (Object[]) data.get("pdus");
-//        String  sms = "";
-//
-//        for(int i=0;i<pdus.length;i++){
-//            SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) pdus[i]);
-//
-//            String messageBody = smsMessage.getMessageBody();
-//
-//            String sender = smsMessage.getDisplayOriginatingAddress();
-//
+    public void processreceiver(Context context , Intent intent) {
+
+        Bundle data = intent.getExtras();
+
+        Object[] pdus = (Object[]) data.get("pdus");
+        String sms = "";
+
+        for (int i = 0; i < pdus.length; i++) {
+            SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) pdus[i]);
+
+            String messageBody = smsMessage.getMessageBody();
+
+            String sender = smsMessage.getDisplayOriginatingAddress();
+            String senderNum = sender ;
+
+            try
+            {
+                if (senderNum.equals("RM-MITEST"))
+                {
+                    recivedSms(messageBody);
+                    mverifyotpbtn.performClick();
+                }
+            }
+            catch(Exception e){}
 
 
-
+        }
+    }
 
 
     @Override
@@ -124,6 +147,8 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
     }
 
     private void verifyotp(){
+
+
 
         final String KEY_mobile = "otp";
 
@@ -136,7 +161,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
         else{
 
             String url = null;
-            String REGISTER_URL = "http://restapi.gear.host/android_sms/verify_otp.php";
+            String REGISTER_URL = "http://jigsawme.esy.es/verify_otp.php";
 
             REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
             try {
@@ -157,6 +182,10 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
 
                                 if (success) {
 
+                                    String name = jsonresponse.getString("name");
+
+                                    session.createUserLoginSession(name);
+
 //                                    SmsReceiver.bindListener(new SmsListener() {
 //                                        @Override
 //                                        public void messageReceived(String messageText) {
@@ -167,7 +196,16 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
 //                                    });
 
                                     Intent registerintent = new Intent(Verifyotp.this, ReporterDashboard.class);
+
+                                    registerintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                    // Add new Flag to start new Activity
+                                    registerintent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                     startActivity(registerintent);
+                                    finish();
+
+
+
                                 } else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Verifyotp.this);
                                     builder.setMessage("Registration Failed")

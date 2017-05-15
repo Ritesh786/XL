@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">EXCEL</string>
-
+    <string name="msg">Please enable all permission</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hindi">राष्ट्रीय</string>
@@ -37,12 +37,33 @@
         <item>Guntur</item>
 
     </string-array>
-    <string name="title_activity_reporter_dashboard">ReporterDashboard</string>
+
+    <string name="newstype_prompt">Choose a News Type</string>
+
+    <string-array name="newstype_arrays">
+        <item>Choose a News Type</item>
+        <item>National</item>
+        <item>International</item>
+        <item>States</item>
+        <item>Business</item>
+        <item>Cities</item>
+        <item>Sports</item>
+        <item>Editorials</item>
+        <item>Entertainment</item>
+        <item>Society</item>
+        <item>Technology</item>
+        <item>Education</item>
+        <item>Multimesia</item>
+    </string-array>
+
+
+    <string name="title_activity_reporter_dashboard">Excel</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_logout">Logout</string>
 
 
 </resources>
