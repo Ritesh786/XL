@@ -126,7 +126,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
 
             try
             {
-                if (senderNum.equals("RM-MITEST"))
+                if (senderNum.equals("HP-MITEST"))
                 {
                     recivedSms(messageBody);
                     mverifyotpbtn.performClick();
@@ -161,7 +161,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
         else{
 
             String url = null;
-            String REGISTER_URL = "http://jigsawme.esy.es/verify_otp.php";
+            String REGISTER_URL = "http://midigital.in/excel/verify_otp.php";
 
             REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
             try {
@@ -185,15 +185,6 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
                                     String name = jsonresponse.getString("name");
 
                                     session.createUserLoginSession(name);
-
-//                                    SmsReceiver.bindListener(new SmsListener() {
-//                                        @Override
-//                                        public void messageReceived(String messageText) {
-//                                            Log.d("Text",messageText);
-//                                            mverifyotptext.setText(messageText);
-//                                            //Toast.makeText(MainActivity.this,"Message: "+messageText,Toast.LENGTH_LONG).show();
-//                                        }
-//                                    });
 
                                     Intent registerintent = new Intent(Verifyotp.this, ReporterDashboard.class);
 
@@ -247,9 +238,6 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
             RequestQueue requestQueue = Volley.newRequestQueue(Verifyotp.this);
             requestQueue.add(stringRequest);
         }
-
-
-
     }
 
 

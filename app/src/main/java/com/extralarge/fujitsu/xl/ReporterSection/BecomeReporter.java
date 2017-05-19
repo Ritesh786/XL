@@ -1,5 +1,6 @@
 package com.extralarge.fujitsu.xl.ReporterSection;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -22,7 +23,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.extralarge.fujitsu.xl.AbsRuntimePermission;
 import com.extralarge.fujitsu.xl.R;
+import com.extralarge.fujitsu.xl.UserSessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +37,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BecomeReporter extends AppCompatActivity implements View.OnClickListener {
+public class BecomeReporter extends AbsRuntimePermission implements View.OnClickListener {
 
         EditText  mpassword, mname, memail, mmobile, mpincode;
         Button mbtnregister;
@@ -48,11 +51,22 @@ public class BecomeReporter extends AppCompatActivity implements View.OnClickLis
         AlertDialog.Builder builder;
         ArrayAdapter<CharSequence> adapter;
 
+        private static final int REQUEST_PERMISSION = 10;
+
 
 @Override
 protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.becomereporter);
+
+
+        requestAppPermissions(new String[]{
+
+                        Manifest.permission.READ_SMS},
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+////                                Manifest.permission.WRITE_CONTACTS},
+                R.string.msg, REQUEST_PERMISSION);
+
 
 //        musertype = (EditText) findViewById(R.id.reg_usertype);
         mmobile = (EditText) findViewById(R.id.reg_mobile);
@@ -87,7 +101,14 @@ protected void onCreate(Bundle savedInstanceState) {
 
         }
 
-public boolean isValidPhoneNumber(String phoneNumber) {
+        @Override
+        public void onPermissionsGranted(int requestCode) {
+
+                Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
+
+        }
+
+        public boolean isValidPhoneNumber(String phoneNumber) {
 
         String expression ="^(\\+91[\\-\\s]?)?[0]?(91)?[789]\\d{9}$";
         CharSequence inputString = phoneNumber;
@@ -165,7 +186,7 @@ private void registerUser() {
 
         else {
         String url = null;
-             String REGISTER_URL = "http://jigsawme.esy.es/user_reg.php";
+             String REGISTER_URL = "http://midigital.in/excel/user_reg.php";
 
         REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
         try {

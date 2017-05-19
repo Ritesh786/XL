@@ -20,7 +20,7 @@ import com.extralarge.fujitsu.xl.ReporterSection.ReporterLogin;
 
 import java.security.Permission;
 
-public class MainActivity extends AbsRuntimePermission {
+public class MainActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -32,7 +32,7 @@ public class MainActivity extends AbsRuntimePermission {
 
     UserSessionManager session;
 
-    private static final int REQUEST_PERMISSION = 10;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +40,6 @@ public class MainActivity extends AbsRuntimePermission {
         setContentView(R.layout.activity_main);
 
         session = new UserSessionManager(getApplicationContext());
-        requestAppPermissions(new String[]{
-                               Manifest.permission.READ_CONTACTS,
-                               Manifest.permission.READ_SMS},
-//                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-////                                Manifest.permission.WRITE_CONTACTS},
-                       R.string.msg, REQUEST_PERMISSION);
-
         /**
          *Setup the DrawerLayout and NavigationView
          */
@@ -168,39 +161,8 @@ public class MainActivity extends AbsRuntimePermission {
 
     }
 
-    @Override
-    public void onPermissionsGranted(int requestCode) {
 
-        Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
 
-    }
-
-//    class permission extends AbsRuntimePermission {
-//
-//            private static final int REQUEST_PERMISSION = 10;
-//
-//            @Override
-//            public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-//                super.onCreate(savedInstanceState, persistentState);
-//
-//
-//
-//                requestAppPermissions(new String[]{
-////                                Manifest.permission.READ_CONTACTS,
-//                                Manifest.permission.READ_SMS},
-////                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-////                                Manifest.permission.WRITE_CONTACTS},
-//                        R.string.msg, REQUEST_PERMISSION);
-//            }
-//
-//            @Override
-//            public void onPermissionsGranted(int requestCode) {
-//
-//                //Do anything when permisson granted
-//                Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
-//
-//            }
-//        }
 
 
     }

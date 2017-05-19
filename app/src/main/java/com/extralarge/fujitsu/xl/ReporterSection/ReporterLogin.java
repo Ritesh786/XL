@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +41,7 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
     AppCompatButton msendotpbtn;
 
     UserSessionManager session;
-    private static final int PERMS_REQUEST_CODE = 123;
+
 
 
     @Override
@@ -59,8 +60,19 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
     }
 
 
+    @Override
+    public void onClick(final View v) {
 
+        sendotp();
 
+        v.setClickable(false);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                v.setClickable(true);
+            }
+        }, 5000);
+
+    }
 
     private void sendotp(){
 
@@ -76,7 +88,7 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
         else{
 
             String url = null;
-            String REGISTER_URL = "http://jigsawme.esy.es/request_sms.php";
+            String REGISTER_URL = "http://midigital.in/excel/request_sms.php";
 
             REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
             try {
@@ -144,73 +156,5 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
 
 
     }
-
-    private boolean hasPermissions(){
-        int res = 0;
-        //string array of permissions,
-        String[] permissions = new String[]{Manifest.permission.READ_SMS};
-
-        for (String perms : permissions){
-            res = checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void requestPerms(){
-        String[] permissions = new String[]{Manifest.permission.READ_SMS};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            requestPermissions(permissions,PERMS_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean allowed = true;
-
-        switch (requestCode){
-            case PERMS_REQUEST_CODE:
-
-                for (int res : grantResults){
-                    // if user granted all permissions.
-                    allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
-                }
-
-                break;
-            default:
-                // if user not granted permissions.
-                allowed = false;
-                break;
-        }
-
-        if (allowed){
-            //user granted all permissions we can perform our task.
-            sendotp();
-        }
-        else {
-            // we will give warning to user that they haven't granted permissions.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS)){
-                    Toast.makeText(this, "Storage Permissions denied.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (hasPermissions()){
-            // our app has permissions.
-            sendotp();
-        }
-        else {
-            //our app doesn't have permissions, So i m requesting permissions.
-            requestPerms();
-        }
-    }
-
 
 }
