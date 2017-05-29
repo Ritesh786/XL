@@ -18,6 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="#316e71"
+        app:itemTextColor="#ffffff"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_reporter_dashboard"
         app:menu="@menu/activity_reporter_dashboard_drawer" />

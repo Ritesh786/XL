@@ -186,7 +186,7 @@ private void registerUser() {
 
         else {
         String url = null;
-             String REGISTER_URL = "http://midigital.in/excel/user_reg.php";
+             String REGISTER_URL = "http://api.minews.in/user_reg.php";
 
         REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
         try {

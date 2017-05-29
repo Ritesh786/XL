@@ -1,9 +1,13 @@
 package com.extralarge.fujitsu.xl.ReporterSection;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,6 +62,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
         filter.setPriority(2147483647);
 
         receiver = new BroadcastReceiver() {
+
             @Override
             public void onReceive(Context arr, Intent brr) {
 
@@ -161,7 +166,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
         else{
 
             String url = null;
-            String REGISTER_URL = "http://midigital.in/excel/verify_otp.php";
+            String REGISTER_URL = "http://api.minews.in/verify_otp.php";
 
             REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
             try {
@@ -183,15 +188,22 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
                                 if (success) {
 
                                     String name = jsonresponse.getString("name");
+                                    int id = jsonresponse.getInt("id");
+
+                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Verifyotp.this);
+                                    SharedPreferences.Editor editor = prefs.edit();
+                                    editor.putInt("NameOfShared", id);
+                                    editor.commit();
 
                                     session.createUserLoginSession(name);
 
                                     Intent registerintent = new Intent(Verifyotp.this, ReporterDashboard.class);
-
+//                                    registerintent.putExtra("user_id",id);
+//                                   Log.d("user1234","inte"+id);
                                     registerintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                                     // Add new Flag to start new Activity
-                                    registerintent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                   // registerintent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                     startActivity(registerintent);
                                     finish();
 

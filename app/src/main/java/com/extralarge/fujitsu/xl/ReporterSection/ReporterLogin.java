@@ -88,7 +88,7 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
         else{
 
             String url = null;
-            String REGISTER_URL = "http://midigital.in/excel/request_sms.php";
+            String REGISTER_URL = "http://api.minews.in/request_sms.php";
 
             REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
             try {

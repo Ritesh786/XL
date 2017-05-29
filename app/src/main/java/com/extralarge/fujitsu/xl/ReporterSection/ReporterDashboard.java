@@ -2,11 +2,14 @@ package com.extralarge.fujitsu.xl.ReporterSection;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,25 +24,32 @@ import android.widget.Toast;
 
 import com.extralarge.fujitsu.xl.MainActivity;
 import com.extralarge.fujitsu.xl.R;
+import com.extralarge.fujitsu.xl.TabFragment;
 import com.extralarge.fujitsu.xl.UserSessionManager;
 
 import java.util.HashMap;
 
 public class ReporterDashboard extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
 
     TextView mnametext;
 
     UserSessionManager session;
 
     String name;
+    DashboardFragment fragment1;
+    int id;
+    Bundle bundle;
+
+    FragmentManager mFragmentManager;
+    FragmentTransaction mFragmentTransaction;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reporter_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Upload News");
         setSupportActionBar(toolbar);
 
         session = new UserSessionManager(getApplicationContext());
@@ -64,10 +74,36 @@ public class ReporterDashboard extends AppCompatActivity
         mnametext = (TextView) hView.findViewById(R.id.nametext);
         navigationView.setNavigationItemSelectedListener(this);
 
-        DashboardFragment fragment = new DashboardFragment();
-        FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().add(R.id.frame_trans, fragment).addToBackStack("Upload News").commit();
-        //  manager.addOnBackStackChangedListener(this);
+//        Intent intent = getIntent();
+//        id = intent.getIntExtra("user_id",0);
+//        getMyData();
+        final SharedPreferences mSharedPreference= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        id=(mSharedPreference.getInt("NameOfShared", 0));
+
+        Log.d("user0123", String.valueOf(id));
+
+        bundle = new Bundle();
+        bundle.putInt("message",id);
+
+//       fragment1 = new DashboardFragment();
+//        FragmentManager manager = getSupportFragmentManager();
+//        fragment1.setArguments(bundle);
+//        manager.beginTransaction().add(R.id.frame_trans, fragment1).addToBackStack("Upload").commit();
+//         manager.addOnBackStackChangedListener(this);
+
+//        tabdesign fragtab = new tabdesign();
+//        mFragmentManager = getSupportFragmentManager();
+//        fragtab.setArguments(bundle);
+//        mFragmentTransaction = mFragmentManager.beginTransaction();
+//        mFragmentTransaction.replace(R.id.frame_trans, fragtab).commit();
+//
+         tabdesign tabfrag = new tabdesign();
+        mFragmentManager = getSupportFragmentManager();
+        tabfrag.setArguments(bundle);
+        mFragmentTransaction = mFragmentManager.beginTransaction();
+        mFragmentTransaction.replace(R.id.frame_trans, tabfrag).addToBackStack("Reporter Dashboard").commit();
+        mFragmentManager.addOnBackStackChangedListener(this);
+
 
         Toast.makeText(getApplicationContext(),
                 "User Login Status: " + session.isUserLoggedIn(),
@@ -88,12 +124,23 @@ public class ReporterDashboard extends AppCompatActivity
 
     }
 
+//    public int getMyData() {
+//        return id;
+//    }
+
+
     @Override
     public void onBackPressed() {
+        Fragment fragment = new Fragment();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }else if (fragment.equals(fragment1)){
+
+            super.onBackPressed();
+        }
+
+        else {
 
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
@@ -176,17 +223,49 @@ public class ReporterDashboard extends AppCompatActivity
             // Handle navigation view item clicks here.
             int id = item.getItemId();
 
-            if (id == R.id.nav_camera) {
-                // Handle the camera action
-            } else if (id == R.id.nav_gallery) {
+            if (id == R.id.nav_home) {
 
-            } else if (id == R.id.nav_slideshow) {
+                tabdesign tabfrag = new tabdesign();
+                mFragmentManager = getSupportFragmentManager();
+                tabfrag.setArguments(bundle);
+                mFragmentTransaction = mFragmentManager.beginTransaction();
+                mFragmentTransaction.replace(R.id.frame_trans, tabfrag).addToBackStack("Reporter Dashboard").commit();
+                mFragmentManager.addOnBackStackChangedListener(this);
 
-            } else if (id == R.id.nav_manage) {
 
-            } else if (id == R.id.nav_share) {
+            }
 
-            } else if (id == R.id.nav_send) {
+               else if (id == R.id.nav_upload) {
+
+                DashboardFragment fragment = new DashboardFragment();
+                FragmentManager manager = getSupportFragmentManager();
+                fragment.setArguments(bundle);
+                manager.beginTransaction().replace(R.id.frame_trans, fragment).addToBackStack("Upload News").commit();
+                manager.addOnBackStackChangedListener(this);
+
+            } else if (id == R.id.nav_newsStatus) {
+
+                PendingNews fragment = new PendingNews();
+                FragmentManager manager = getSupportFragmentManager();
+                fragment.setArguments(bundle);
+                manager.beginTransaction().replace(R.id.frame_trans, fragment).addToBackStack("Pending News").commit();
+                manager.addOnBackStackChangedListener(this);
+
+            } else if (id == R.id.nav_verifiednews) {
+
+                VerifiedNews fragment = new VerifiedNews();
+                FragmentManager manager = getSupportFragmentManager();
+                fragment.setArguments(bundle);
+                manager.beginTransaction().replace(R.id.frame_trans, fragment).addToBackStack("Verified News").commit();
+                manager.addOnBackStackChangedListener(this);
+
+            } else if (id == R.id.nav_notver) {
+
+                RejectedNews fragment = new RejectedNews();
+                FragmentManager manager = getSupportFragmentManager();
+                fragment.setArguments(bundle);
+                manager.beginTransaction().replace(R.id.frame_trans, fragment).addToBackStack("Rejected News").commit();
+                manager.addOnBackStackChangedListener(this);
 
             }
 
@@ -196,7 +275,24 @@ public class ReporterDashboard extends AppCompatActivity
         }
 
 
+    @Override
+    public void onBackStackChanged() {
+
+        try {
+
+            int lastBackStackEntryCount = getSupportFragmentManager().getBackStackEntryCount() - 1;
+
+            FragmentManager.BackStackEntry lastBackStackEntry =
+                    getSupportFragmentManager().getBackStackEntryAt(lastBackStackEntryCount);
+
+            setTitle(lastBackStackEntry.getName());
+
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+
     }
+}
 
 
 

@@ -12,6 +12,11 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <ImageView
             android:background="@drawable/logofix"
             android:layout_gravity="center_horizontal"
@@ -67,8 +72,14 @@
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Verify OTP"/>
+        </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
+        </FrameLayout>
 
     </LinearLayout>
 </ScrollView>

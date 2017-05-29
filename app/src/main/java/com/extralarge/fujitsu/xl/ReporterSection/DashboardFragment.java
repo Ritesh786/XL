@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -58,12 +60,16 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
      Spinner mnewstype;
      Button mchooseimagebtn,muploadnewsbtn;
     ImageView mnewsimage;
-
+    int id;
+    int strtext;
     private int PICK_IMAGE_REQUEST = 1;
 
     private Bitmap bitmap;
     Uri selectedImage;
+    String str = "chala";
+    Bundle bundle;
 
+    public static final String KEY_ID= "user_id";
     public static final String KEY_HHEADLINE = "headline";
     public static final String KEY_CONTENT = "content";
     public static final String KEY_TYPE = "type";
@@ -80,8 +86,10 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
 
         mnewsheadline = (EditText) view.findViewById(R.id.news_heasdline);
         mnewscontent = (EditText) view.findViewById(R.id.news_content);
@@ -94,6 +102,11 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         mchooseimagebtn.setOnClickListener(this);
         muploadnewsbtn.setOnClickListener(this);
+
+//        ReporterDashboard activity = (ReporterDashboard) getActivity();
+//         id = activity.getMyData();
+//        String iddd = String.valueOf(id);
+//        Log.d("main123", iddd);
 
         return view;
     }
@@ -128,138 +141,167 @@ try {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
         try{
-      //  Context context = getContext();
-String str = "chala";
-        selectedImage = data.getData();
+        Log.d("try4",str);
+        super.onActivityResult(requestCode, resultCode, data);}catch (Exception e){
+            Log.d("try8",e.toString());
+            Toast.makeText(getContext(),"On super "+e.toString(),Toast.LENGTH_LONG).show();
 
-        if (requestCode >= PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            Uri filePath = data.getData();
-//            try {
-//                bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), filePath);
-//                mnewsimage.setImageBitmap(bitmap);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-            Cursor cursor = getContext().getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-           Log.d("try1",str);
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-            mnewsimage.setImageURI(selectedImage);
         }
 
 
-           try {
-               Log.d("try2",str);
-               bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), selectedImage);
-            } catch (IOException e) {
-               e.printStackTrace();
-           }}
-        catch (Exception e){
+            //  Context context = getContext();
 
-            Toast.makeText(getContext(),"On Activity "+e.toString(),Toast.LENGTH_LONG).show();
-        }
+            selectedImage = data.getData();
 
+            if (requestCode >= PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+
+                Uri filePath = data.getData();
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), filePath);
+                    mnewsimage.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
     }
+//            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+//
+//            Cursor cursor = getContext().getContentResolver().query(selectedImage,
+//                    filePathColumn, null, null, null);
+//            cursor.moveToFirst();
+//           Log.d("try1",str);
+//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//            String picturePath = cursor.getString(columnIndex);
+//            cursor.close();
+//            mnewsimage.setImageURI(selectedImage);
+//        }
+//
+//
+//           try {
+//               Log.d("try2",str);
+//               bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), selectedImage);
+//            } catch (IOException e) {
+//               e.printStackTrace();
+//           }}
+//        catch (Exception e){
+//
+//            Toast.makeText(getContext(),"On Activity "+e.toString(),Toast.LENGTH_LONG).show();
+//        }
+
+
 
     public String getStringImage(Bitmap bmp){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 0, baos);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
     }
 
-    public void uploadImage(){
-        final String headline = mnewsheadline.getText().toString().trim();
-        final String content = mnewscontent.getText().toString().trim();
-        final String type = mnewstype.getSelectedItem().toString();
-        final String caption = mnewsimagecaption.getText().toString().trim();
-        final String image = getStringImage(bitmap);
+    public void uploadImage() {
 
 
-        String url = null;
-        String REGISTER_URL = "http://midigital.in/excel/picUpload/upload.php";
 
-        REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
         try {
-            URL sourceUrl = new URL(REGISTER_URL);
-            url = sourceUrl.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        final ProgressDialog loading = ProgressDialog.show(getContext(),"Uploading...","Please wait...",false,false);
+           bundle = this.getArguments();
+            strtext = bundle.getInt("message", 0);
+            Log.d("idv012", String.valueOf(strtext));
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //   Log.d("jaba", usernsme);
-//                        try {
-//                            JSONObject jsonresponse = new JSONObject(response);
-//                            boolean success = jsonresponse.getBoolean("success");
-//
-//                            if (success) {
-//
-//                                Intent registerintent = new Intent(getContext(), Verifyotp.class);
-//                                startActivity(registerintent);
-//
-//                            } else {
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(ReporterLogin.this);
-//                                builder.setMessage("Registration Failed")
-//                                        .setNegativeButton("Retry", null)
-//                                        .create()
-//                                        .show();
-//
-//                            }
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-                        Log.d("jabadi", headline);
-                        loading.dismiss();
-                        Toast.makeText(getContext(), response.toString(), Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                         Log.d("dabadi", headline);
-                        loading.dismiss();
-                        Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
-
-                    }
-                }) {
+            final String userid = String.valueOf(strtext);
+            final String headline = mnewsheadline.getText().toString().trim();
+            final String content = mnewscontent.getText().toString().trim();
+            final String type = mnewstype.getSelectedItem().toString();
+            final String caption = mnewsimagecaption.getText().toString().trim();
+            final String image = getStringImage(bitmap);
 
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                //Adding parameters to request
-                params.put(KEY_HHEADLINE,headline);
-                params.put(KEY_TYPE,type);
-                params.put(KEY_CONTENT,content);
-                params.put(KEY_IMAGE,image);
-                params.put(KEY_CAPTION,caption);
-                return params;
+            String url = null;
+            String REGISTER_URL = "http://api.minews.in/picUpload/upload.php";
 
+            REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
+            try {
+                URL sourceUrl = new URL(REGISTER_URL);
+                url = sourceUrl.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
+            final ProgressDialog loading = ProgressDialog.show(getContext(), "Uploading...", "Please wait...", false, false);
 
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(stringRequest);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("jaba", userid);
+                        try {
+                            JSONObject jsonresponse = new JSONObject(response);
+                            boolean success = jsonresponse.getBoolean("success");
+
+                            if (success) {
+                                                      mnewsimagecaption.setText("");
+                                                      mnewsheadline.setText("");
+                                                      mnewscontent.setText("");
+                                                      mnewstype.setAdapter(null);
+                                                      mnewsimage.setImageResource(0);
+//                                PendingNews fragment = new PendingNews();
+//                                FragmentManager manager = getFragmentManager();
+//                                fragment.setArguments(bundle);
+//                                manager.beginTransaction().replace(R.id.frame_trans, fragment).addToBackStack("Pending News").commit();
+
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                builder.setMessage("Upoading Failed")
+                                        .setNegativeButton("Retry", null)
+                                        .create()
+                                        .show();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                            Log.d("jabadi", headline);
+                            loading.dismiss();
+                            Toast.makeText(getContext(), response.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("bada123", userid);
+
+                            loading.dismiss();
+                            Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                            Log.d("error1234", error.toString());
+
+                        }
+                    }) {
 
 
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    //Adding parameters to request
+                    params.put(KEY_ID, userid);
+                    params.put(KEY_HHEADLINE, headline);
+                    params.put(KEY_CONTENT, content);
+                    params.put(KEY_TYPE, type);
+                    params.put(KEY_IMAGE, image);
+                    params.put(KEY_CAPTION, caption);
+                    return params;
 
+                }
+
+            };
+
+//            stringRequest.setRetryPolicy(new DefaultRetryPolicy( 0,
+//                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+            requestQueue.add(stringRequest);
 
 
 //        class UploadImage extends AsyncTask<Void,Void,String> {
@@ -267,7 +309,7 @@ String str = "chala";
 //            @Override
 //            protected void onPreExecute() {
 //                super.onPreExecute();
-//                loading = ProgressDialog.show(getContext(),"Please wait...","Your News Is Uploading",false,false);
+//                loading = ProgressDialog.show(getContext(),"Please wait...","Y Is Uploading",false,false);
 //            }
 //
 //            @Override
@@ -293,15 +335,13 @@ String str = "chala";
 //        }
 //        UploadImage u = new UploadImage();
 //        u.execute();
+        }catch (Exception e){
+
+            Log.d("msg1234",e.toString());
+        }
     }
 
-    @Override
-    public void onDestroy() {
-        String btr = "hogaya";
 
-        Log.d("destr",btr);
-        super.onDestroy();
-    }
 
     @Override
     public void onClick(View v) {
@@ -314,4 +354,6 @@ String str = "chala";
         }
 
     }
+
+
 }
