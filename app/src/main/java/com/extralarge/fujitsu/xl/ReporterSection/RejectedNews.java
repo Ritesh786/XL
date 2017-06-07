@@ -64,6 +64,15 @@ public class RejectedNews extends Fragment {
 //                new ColorDrawable(Color.parseColor("#1b1b1b")));
 
         // Creating volley request obj
+
+        populatdata();
+
+        return view;
+
+    }
+
+    public void populatdata(){
+
         Bundle bundle = this.getArguments();
         strtext = bundle.getInt("message",0);
         Log.d("idv", String.valueOf(strtext));
@@ -87,7 +96,7 @@ public class RejectedNews extends Fragment {
                                 Movie movie = new Movie();
                                 movie.setTitle(obj.getString("headline"));
                                 movie.setThumbnailUrl(obj.getString("image"));
-                                movie.setRating(obj.getString("content"));
+                            //    movie.setRating(obj.getString("content"));
 
                                 movie.setYear(obj.getString("type"));
                                 movie.setGenre(obj.getString("created_at"));
@@ -125,8 +134,7 @@ public class RejectedNews extends Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(movieReq);
 
-        return view;
-
+        if(movieList!=null) movieList.clear();
     }
 
     @Override

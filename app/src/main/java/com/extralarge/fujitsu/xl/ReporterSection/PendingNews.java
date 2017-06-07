@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -81,6 +82,13 @@ public class PendingNews extends Fragment {
 //                new ColorDrawable(Color.parseColor("#1b1b1b")));
 
         // Creating volley request obj
+        populatedat();
+
+
+        return  view;
+    }
+
+    public void populatedat(){
 
         Bundle bundle = this.getArguments();
         strtext = bundle.getInt("message", 0);
@@ -131,7 +139,7 @@ public class PendingNews extends Fragment {
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
                         adapter.notifyDataSetChanged();
-                      //  adapter.setHasStableIds(true);
+                        //  adapter.setHasStableIds(true);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -145,9 +153,8 @@ public class PendingNews extends Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(movieReq);
 
+        if(movieList!=null) movieList.clear();
 
-
-        return  view;
     }
 
     @Override
@@ -163,12 +170,6 @@ public class PendingNews extends Fragment {
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
 
 }
 

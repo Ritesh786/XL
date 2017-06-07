@@ -1,4 +1,4 @@
-package com.extralarge.fujitsu.xl.ReporterSection;
+package com.extralarge.fujitsu.xl;
 
 
 import android.app.ProgressDialog;
@@ -15,7 +15,11 @@ import android.widget.ListView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.extralarge.fujitsu.xl.R;
+import com.extralarge.fujitsu.xl.ReporterSection.AppController;
+import com.extralarge.fujitsu.xl.ReporterSection.CustomListAdapter;
+import com.extralarge.fujitsu.xl.ReporterSection.Movie;
+import com.extralarge.fujitsu.xl.ReporterSection.NewsDetailShow;
+import com.extralarge.fujitsu.xl.ReporterSection.VerifiedNews;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,12 +28,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class VerifiedNews extends Fragment implements AdapterView.OnItemClickListener {
+public class MainNews extends Fragment implements AdapterView.OnItemClickListener  {
 
-    private static final String TAG = VerifiedNews.class.getSimpleName();
+    private static final String TAG = MainNews.class.getSimpleName();
 
     private ProgressDialog pDialog;
     private List<Movie> movieList = new ArrayList<Movie>();
@@ -38,10 +43,8 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
     int strtext;
     Movie movie;
 
-    String  type,headline,content,caption,image;
 
-
-    public VerifiedNews() {
+    public MainNews() {
         // Required empty public constructor
     }
 
@@ -50,12 +53,9 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_main_news, container, false);
 
-
-        View view = inflater.inflate(R.layout.fragment_verified_news, container, false);
-
-
-        listView = (ListView) view.findViewById(R.id.listvery);
+        listView = (ListView) view.findViewById(R.id.listverymain);
         adapter = new CustomListAdapter(getContext(), movieList);
         listView.setAdapter(adapter);
 
@@ -71,24 +71,21 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
 
         // Creating volley request obj
 
-             populatedata();
-             listView.setOnItemClickListener(this);
+        populatedata();
+        listView.setOnItemClickListener(this);
 
-        return view;
+        return  view;
     }
-
 
     public void populatedata(){
 
-        Bundle bundle = this.getArguments();
-        strtext = bundle.getInt("message",0);
-        Log.d("idv", String.valueOf(strtext));
 
-        final String url = "http://api.minews.in/slimapp/public/api/posts/user/approved/";
 
-        String newurl = url+strtext;
+        final String url = "http://api.minews.in/slimapp/public/api/posts/approved";
 
-        JsonArrayRequest movieReq = new JsonArrayRequest(newurl,
+       // String newurl = url+strtext;
+
+        JsonArrayRequest movieReq = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -181,8 +178,10 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
         newsdetailintnt.putExtra("headline",mo123.getTitle());
         newsdetailintnt.putExtra("content",mo123.getRating());
         newsdetailintnt.putExtra("image",mo123.getThumbnailUrl());
-      //  newsdetailintnt.putExtra("caption",movie.);
+        //  newsdetailintnt.putExtra("caption",movie.);
         startActivity(newsdetailintnt);
 
+    }
 }
-        }
+
+

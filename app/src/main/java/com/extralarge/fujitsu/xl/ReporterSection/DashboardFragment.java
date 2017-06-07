@@ -31,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.extralarge.fujitsu.xl.MainActivity;
@@ -152,7 +153,11 @@ try {
 
             //  Context context = getContext();
 
-            selectedImage = data.getData();
+          if(data==null){
+
+              Toast.makeText(getContext()," Please Select Image For Uploading.... ",Toast.LENGTH_LONG).show();
+
+          }
 
             if (requestCode >= PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
@@ -195,7 +200,7 @@ try {
 
     public String getStringImage(Bitmap bmp){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 30, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
@@ -243,7 +248,7 @@ try {
                                                       mnewsimagecaption.setText("");
                                                       mnewsheadline.setText("");
                                                       mnewscontent.setText("");
-                                                      mnewstype.setAdapter(null);
+                                                   //   mnewstype.setAdapter(null);
                                                       mnewsimage.setImageResource(0);
 //                                PendingNews fragment = new PendingNews();
 //                                FragmentManager manager = getFragmentManager();
@@ -295,10 +300,16 @@ try {
                 }
 
             };
+           // stringRequest.setRetryPolicy(new DefaultRetryPolicy(0, -1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-//            stringRequest.setRetryPolicy(new DefaultRetryPolicy( 0,
-//                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            stringRequest.setRetryPolicy(
+                    new DefaultRetryPolicy(
+                            500000,
+                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                    )
+            );
+
 
             RequestQueue requestQueue = Volley.newRequestQueue(getContext());
             requestQueue.add(stringRequest);

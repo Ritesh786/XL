@@ -7,9 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.extralarge.fujitsu.xl.ReporterSection.DashboardFragment;
 
 /**
  * Created by Fujitsu on 28/04/2017.
@@ -19,7 +22,7 @@ public class TabFragment  extends Fragment {
 
     public static TabLayout tabLayout;
     public static ViewPager viewPager;
-    public static int int_items = 6 ;
+    public static int int_items = 5 ;
 
     @Nullable
     @Override
@@ -67,12 +70,16 @@ public class TabFragment  extends Fragment {
         public Fragment getItem(int position)
         {
             switch (position){
-                case 0 : return new PrimaryFragment();
+                case 0 :MainNews dashfab = new MainNews();
+                    FragmentManager manager = getFragmentManager();
+                    manager.beginTransaction().commit();
+                   // Log.d("tab0123", String.valueOf(strtext));
+                    return dashfab;
                 case 1 : return new SocialFragment();
                 case 2 : return new UpdatesFragment();
                 case 3 : return new UpdatesFragment();
                 case 4 : return new UpdatesFragment();
-                case 5 : return new UpdatesFragment();
+
             }
             return null;
         }
@@ -92,17 +99,16 @@ public class TabFragment  extends Fragment {
         public CharSequence getPageTitle(int position) {
 
             switch (position){
+
                 case 0 :
-                    return "Home";
-                case 1 :
                     return "National";
-                case 2 :
+                case 1 :
                     return "International";
-                case 3 :
+                case 2 :
                     return "State";
-                case 4 :
+                case 3 :
                     return "Business";
-                case 5 :
+                case 4 :
                     return "Cities";
             }
             return null;

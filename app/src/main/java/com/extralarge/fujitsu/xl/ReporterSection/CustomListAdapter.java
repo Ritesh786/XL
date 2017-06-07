@@ -56,7 +56,7 @@ public class CustomListAdapter  extends BaseAdapter {
     static class ViewHolder {
         NetworkImageView thumbNail;
         TextView title;
-        TextView rating;
+      // TextView rating;
         TextView genre;
         TextView year;
     }
@@ -79,7 +79,7 @@ public class CustomListAdapter  extends BaseAdapter {
       holder.thumbNail = (NetworkImageView) convertView
                 .findViewById(R.id.thumbnail);
         holder.title = (TextView) convertView.findViewById(R.id.title);
-        holder.rating = (TextView) convertView.findViewById(R.id.rating);
+       // holder.rating = (TextView) convertView.findViewById(R.id.rating);
         holder.genre = (TextView) convertView.findViewById(R.id.genre);
         holder.year = (TextView) convertView.findViewById(R.id.releaseYear);
 
@@ -105,7 +105,7 @@ public class CustomListAdapter  extends BaseAdapter {
         holder.title.setText(m.getTitle());
 
         // rating
-        holder.rating.setText("News Content: " + String.valueOf(m.getRating()));
+       // holder.rating.setText("News Type: " + String.valueOf(m.getRating()));
 
         // genre
         holder.genre.setText(m.getGenre());

@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.extralarge.fujitsu.xl.AbsRuntimePermission;
 import com.extralarge.fujitsu.xl.R;
 import com.extralarge.fujitsu.xl.UserSessionManager;
 
@@ -33,7 +34,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReporterLogin extends AppCompatActivity implements View.OnClickListener {
+public class ReporterLogin extends AbsRuntimePermission implements View.OnClickListener {
 
     EditText msendotptext;
     String sendotptxt;
@@ -41,13 +42,22 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
     AppCompatButton msendotpbtn;
 
     UserSessionManager session;
-
+    private static final int REQUEST_PERMISSION = 10;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reporter_login2);
+
+
+        requestAppPermissions(new String[]{
+
+                        Manifest.permission.READ_SMS},
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+////                                Manifest.permission.WRITE_CONTACTS},
+                R.string.msg, REQUEST_PERMISSION);
+
 
         session = new UserSessionManager(getApplicationContext());
 
@@ -56,6 +66,13 @@ public class ReporterLogin extends AppCompatActivity implements View.OnClickList
         msendotpbtn = (AppCompatButton) findViewById(R.id.sendotp_btn);
       //  hasPermissions();
        msendotpbtn.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode) {
+
+        Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
 
     }
 

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -22,6 +23,7 @@ import java.util.List;
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.MyViewHolder> {
 
     private List<Movie> movieItems;
+    Context context;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
 
@@ -35,7 +37,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.MyViewHo
             thumbNail = (NetworkImageView) view
                     .findViewById(R.id.thumbnail);
             title = (TextView) view.findViewById(R.id.title);
-            rating = (TextView) view.findViewById(R.id.rating);
+          //  rating = (TextView) view.findViewById(R.id.rating);
             genre = (TextView) view.findViewById(R.id.genre);
            year = (TextView) view.findViewById(R.id.releaseYear);
         }
@@ -66,7 +68,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.MyViewHo
         holder.genre.setText(movie.getGenre());
         holder.year.setText(movie.getYear());
       // holder.thumbNail.setImageUrl(movieItems.get(position).getThumbnailUrl(), imageLoader);
-        holder.rating.setText(movie.getRating());
+      //  holder.rating.setText(""+movie.getRating());
        // Picasso.with(context).load(movieItems.get(position).getThumbnailUrl()).into(holder.thumbNail);
 
         if(!URLUtil.isValidUrl(movieItems.get(position).getThumbnailUrl()))
@@ -76,7 +78,12 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.MyViewHo
         else
         {
             holder.thumbNail.setVisibility(View.VISIBLE);//add this
-            holder.thumbNail.setImageUrl(movieItems.get(position).getThumbnailUrl(), imageLoader);
+            try {
+                holder.thumbNail.setImageUrl(movieItems.get(position).getThumbnailUrl(), imageLoader);
+            }catch (Exception e){
+
+                Toast.makeText(context,"On Activity "+e.toString(),Toast.LENGTH_LONG).show();
+            }
         }
 
 

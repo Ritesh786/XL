@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BecomeReporter extends AbsRuntimePermission implements View.OnClickListener {
+public class BecomeReporter extends AppCompatActivity implements View.OnClickListener {
 
         EditText  mpassword, mname, memail, mmobile, mpincode;
         Button mbtnregister;
@@ -51,7 +51,7 @@ public class BecomeReporter extends AbsRuntimePermission implements View.OnClick
         AlertDialog.Builder builder;
         ArrayAdapter<CharSequence> adapter;
 
-        private static final int REQUEST_PERMISSION = 10;
+
 
 
 @Override
@@ -59,13 +59,6 @@ protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.becomereporter);
 
-
-        requestAppPermissions(new String[]{
-
-                        Manifest.permission.READ_SMS},
-//                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-////                                Manifest.permission.WRITE_CONTACTS},
-                R.string.msg, REQUEST_PERMISSION);
 
 
 //        musertype = (EditText) findViewById(R.id.reg_usertype);
@@ -85,11 +78,11 @@ protected void onCreate(Bundle savedInstanceState) {
         String[] countries = getResources().getStringArray(R.array.CityNames);
         String[] genders = getResources().getStringArray(R.array.gender);
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, countries);
+                new ArrayAdapter<String>(getApplicationContext(), R.layout.autocomplete, countries);
 
 
         ArrayAdapter<String> gendadapter =
-                new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, genders);
+                new ArrayAdapter<String>(getApplicationContext(), R.layout.autocomplete, genders);
 
         mstate.setAdapter(adapter);
         mcity.setAdapter(adapter);
@@ -98,13 +91,6 @@ protected void onCreate(Bundle savedInstanceState) {
         mbtnregister = (Button) findViewById(R.id.btn_Register);
         mbtnregister.setOnClickListener(this);
 
-
-        }
-
-        @Override
-        public void onPermissionsGranted(int requestCode) {
-
-                Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
 
         }
 

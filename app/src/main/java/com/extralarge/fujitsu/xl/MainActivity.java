@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_national) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new MainNews()).commit();
                     toolbar.setTitle("राष्ट्रीय");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -127,11 +127,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_reporterlogin) {
 
-                    session.createUserLoginSession(name);
+                   // session.createUserLoginSession(name);
 
                     Intent reporterloginint = new Intent(MainActivity.this, ReporterLogin.class);
-                    reporterloginint.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    reporterloginint.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//                    reporterloginint.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    reporterloginint.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(reporterloginint);
                 }
 

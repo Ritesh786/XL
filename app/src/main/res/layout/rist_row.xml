@@ -24,21 +24,21 @@
         android:textStyle="bold" />
 
     <!-- Rating -->
-    <TextView
-        android:id="@+id/rating"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="@dimen/rating" />
+    <!--<TextView-->
+        <!--android:id="@+id/rating"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/title"-->
+        <!--android:layout_marginTop="1dip"-->
+        <!--android:layout_toRightOf="@+id/thumbnail"-->
+        <!--android:textSize="@dimen/rating" />-->
 
     <!-- Genre -->
     <TextView
         android:id="@+id/genre"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rating"
+        android:layout_below="@id/title"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/thumbnail"
         android:textColor="@color/genre"
