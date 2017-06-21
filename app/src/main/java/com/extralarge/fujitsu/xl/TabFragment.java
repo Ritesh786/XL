@@ -7,12 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.extralarge.fujitsu.xl.ReporterSection.DashboardFragment;
+import com.extralarge.fujitsu.xl.NewsSection.International;
+import com.extralarge.fujitsu.xl.NewsSection.MainNews;
+import com.extralarge.fujitsu.xl.NewsSection.National;
+import com.extralarge.fujitsu.xl.NewsSection.State;
 
 /**
  * Created by Fujitsu on 28/04/2017.
@@ -75,10 +77,10 @@ public class TabFragment  extends Fragment {
                     manager.beginTransaction().commit();
                    // Log.d("tab0123", String.valueOf(strtext));
                     return dashfab;
-                case 1 : return new SocialFragment();
-                case 2 : return new UpdatesFragment();
-                case 3 : return new UpdatesFragment();
-                case 4 : return new UpdatesFragment();
+                case 1 : return new National();
+                case 2 : return new International();
+                case 3 : return new State();
+                case 4 : return new National();
 
             }
             return null;
@@ -101,15 +103,15 @@ public class TabFragment  extends Fragment {
             switch (position){
 
                 case 0 :
-                    return "National";
+                    return "HOME";
                 case 1 :
-                    return "International";
+                    return "NATIONAL";
                 case 2 :
-                    return "State";
+                    return "INTERNATIONAL";
                 case 3 :
-                    return "Business";
+                    return "STATE";
                 case 4 :
-                    return "Cities";
+                    return "BUSINESS";
             }
             return null;
         }

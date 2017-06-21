@@ -2,25 +2,38 @@ package com.extralarge.fujitsu.xl;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.PersistableBundle;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.extralarge.fujitsu.xl.FCM.tokensave;
+import com.extralarge.fujitsu.xl.NewsSection.MainNews;
+import com.extralarge.fujitsu.xl.NewsSection.State;
 import com.extralarge.fujitsu.xl.ReporterSection.BecomeReporter;
 import com.extralarge.fujitsu.xl.ReporterSection.ReporterDashboard;
 import com.extralarge.fujitsu.xl.ReporterSection.ReporterLogin;
 
-import java.security.Permission;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AbsRuntimePermission {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
@@ -31,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
     String name;
 
     UserSessionManager session;
-
-
+    private static final int REQUEST_PERMISSION = 10;
+    int i = 0;
+    static boolean f = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +60,16 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.navigationview);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if(!prefs.getBoolean("firstTime", false)) {
+
+            SendtokenofNews();
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
 
         /**
          * Lets inflate the very first fragment
@@ -62,6 +86,17 @@ public class MainActivity extends AppCompatActivity {
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("EXCEL");
         toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
+
+        ImageView msearch = (ImageView) toolbar.findViewById(R.id.searchimage);
+        msearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent searchint = new Intent(MainActivity.this,SearchActivity.class);
+                startActivity(searchint);
+            }
+        });
+
 
         Intent intent = getIntent();
          name = intent.getStringExtra("session");
@@ -89,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_International) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
                     toolbar.setTitle("International");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -97,14 +132,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_states) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
                     toolbar.setTitle("States");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
                 }
                 if (menuItem.getItemId() == R.id.nav_item_business) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
                     toolbar.setTitle("Business");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -112,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_item_city) {
                     FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new PrimaryFragment()).commit();
+                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
                     toolbar.setTitle("Cities");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
 
@@ -159,10 +194,76 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerToggle.syncState();
 
+        requestAppPermissions(new String[]{
+
+                                Manifest.permission.READ_SMS,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE},
+                        R.string.msg, REQUEST_PERMISSION);
+
+//        if(i == 0){
+//
+//            Log.d("if00","abcd");
+//            SendtokenofNews();
+//        }
+//
+//        Log.d("ival001", String.valueOf(i));
+
+
+
+        }
+
+
+
+
+    @Override
+    public void onPermissionsGranted(int requestCode) {
+
     }
 
+    public void SendtokenofNews() {
 
 
+        final String token = tokensave.getInstance(MainActivity.this).getDeviceToken();
+        final String LOGIN_URL = "http://api.minews.in/slimapp/public/api/readers/";
+
+        String newurl = LOGIN_URL+token;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, newurl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("jaba",response.toString());
+                        Log.d("tok00",token);
+                        try {
+                            JSONObject jsonresponse = new JSONObject(response);
+                            boolean success = jsonresponse.getBoolean("success");
+
+                            if(success){
+
+                            }
+
+                            Log.d("ival00", String.valueOf(i));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                     //   Log.d("jabadi",motptext);
+                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+
+                    }
+                }) {
+
+        };RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(stringRequest);
+    }
 
 
     }

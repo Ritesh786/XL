@@ -73,7 +73,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     public static final String KEY_ID= "user_id";
     public static final String KEY_HHEADLINE = "headline";
     public static final String KEY_CONTENT = "content";
-    public static final String KEY_TYPE = "type";
+    public static final String KEY_TYPE = "category";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_CAPTION = "caption";
   //  public static final String UPLOAD_URL = "http://jigsawme.esy.es/picUpload/upload.php";
@@ -224,7 +224,7 @@ try {
 
 
             String url = null;
-            String REGISTER_URL = "http://api.minews.in/picUpload/upload.php";
+            String REGISTER_URL = "http://minews.in/storage/app/public/upload.php";
 
             REGISTER_URL = REGISTER_URL.replaceAll(" ", "%20");
             try {

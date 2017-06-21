@@ -94,11 +94,16 @@ public class RejectedNews extends Fragment {
 
                                 JSONObject obj = response.getJSONObject(i);
                                 Movie movie = new Movie();
+
+                                String imagestr = obj.getString("image");
+                                String imagrurl = "http://minews.in/storage/app/public/uploads/";
+                                String imageurlfull = imagrurl+imagestr;
+
                                 movie.setTitle(obj.getString("headline"));
-                                movie.setThumbnailUrl(obj.getString("image"));
+                                movie.setThumbnailUrl(imageurlfull);
                             //    movie.setRating(obj.getString("content"));
 
-                                movie.setYear(obj.getString("type"));
+                                movie.setYear(obj.getString("category"));
                                 movie.setGenre(obj.getString("created_at"));
 
                                 // Genre is json array  (Number) obj.get("type")

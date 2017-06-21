@@ -12,10 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.extralarge.fujitsu.xl.PrimaryFragment;
 import com.extralarge.fujitsu.xl.R;
-import com.extralarge.fujitsu.xl.SocialFragment;
-import com.extralarge.fujitsu.xl.UpdatesFragment;
 
 /**
  * Created by Fujitsu on 28/04/2017.

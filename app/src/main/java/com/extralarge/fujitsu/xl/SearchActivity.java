@@ -1,40 +1,47 @@
-package com.extralarge.fujitsu.xl.ReporterSection;
-
+package com.extralarge.fujitsu.xl;
 
 import android.app.ProgressDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.extralarge.fujitsu.xl.R;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.extralarge.fujitsu.xl.ReporterSection.AppController;
+import com.extralarge.fujitsu.xl.ReporterSection.Movie;
+import com.extralarge.fujitsu.xl.ReporterSection.PendingNews;
+import com.extralarge.fujitsu.xl.ReporterSection.RecycleAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class PendingNews extends Fragment {
+public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = PendingNews.class.getSimpleName();
+    private static final String TAG = SearchActivity.class.getSimpleName();
 
-    // Movies json url
+    ImageView mbackimage, msearchimage;
+    EditText msearchedit;
 
     private ProgressDialog pDialog;
     private List<Movie> movieList = new ArrayList<Movie>();
@@ -43,58 +50,70 @@ public class PendingNews extends Fragment {
     private RecyclerView recyclerView;
 
     private RecycleAdapter adapter;
-    int strtext;
 
-    public PendingNews() {
-        // Required empty public constructor
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
+
+        mbackimage = (ImageView) findViewById(R.id.back_imagesearch);
+        msearchimage = (ImageView) findViewById(R.id.search_image);
+
+        msearchedit = (EditText) findViewById(R.id.search_edittxt);
+
+        mbackimage.setOnClickListener(this);
+        msearchimage.setOnClickListener(this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+//        adapter = new CustomListAdapter(getContext(), movieList);
+        // listView.setAdapter(adapter);
+        adapter = new RecycleAdapter(movieList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SearchActivity.this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // recyclerView.getItemAnimator().setChangeDuration(0);
+
+        // adapter.getItemAnimator().setSupportsChangeAnimations(false);
+
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+
+            case R.id.back_imagesearch:
+
+                SearchActivity.this.finish();
+
+                break;
+
+            case R.id.search_image:
+
+                searchbar();
+
+                break;
+
+        }
     }
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_news_status, container, false);
 
-       // listView = (ListView) view.findViewById(R.id.list);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-//        adapter = new CustomListAdapter(getContext(), movieList);
-       // listView.setAdapter(adapter);
-        adapter = new RecycleAdapter(movieList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(adapter);
-       recyclerView.setItemAnimator(new DefaultItemAnimator());
+    public void searchbar() {
 
-      // recyclerView.getItemAnimator().setChangeDuration(0);
-
-       // adapter.getItemAnimator().setSupportsChangeAnimations(false);
-
-        pDialog = new ProgressDialog(getContext());
+        pDialog = new ProgressDialog(SearchActivity.this);
         // Showing progress dialog before making http request
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-        // changing action bar color
-//        getActionBar().setBackgroundDrawable(
-//                new ColorDrawable(Color.parseColor("#1b1b1b")));
+       final String  strtext = msearchedit.getText().toString().trim();
 
-        // Creating volley request obj
-        populatedat();
-
-
-        return  view;
-    }
-
-    public void populatedat(){
-
-        Bundle bundle = this.getArguments();
-        strtext = bundle.getInt("message", 0);
-        Log.d("idv", String.valueOf(strtext));
-
-        final String url = "http://api.minews.in/slimapp/public/api/posts/user/pending/";
+        final String url = "http://api.minews.in/slimapp/public/api/posts/search/";
 
         String newurl = url+strtext;
 
@@ -102,7 +121,7 @@ public class PendingNews extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d(TAG, response.toString());
+                        Log.d("rest101", strtext);
                         hidePDialog();
 
                         // Parsing json
@@ -149,7 +168,10 @@ public class PendingNews extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.getMessage());
+                Log.d("errr120", "Error: " + error.toString());
+                Log.d("rest102", strtext);
+                Toast.makeText(SearchActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+
                 hidePDialog();
 
             }
@@ -158,7 +180,6 @@ public class PendingNews extends Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(movieReq);
 
-        if(movieList!=null) movieList.clear();
 
     }
 
@@ -176,5 +197,6 @@ public class PendingNews extends Fragment {
     }
 
 
-}
+    }
+
 

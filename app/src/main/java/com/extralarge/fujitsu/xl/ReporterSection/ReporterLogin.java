@@ -2,15 +2,12 @@ package com.extralarge.fujitsu.xl.ReporterSection;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.extralarge.fujitsu.xl.AbsRuntimePermission;
+import com.extralarge.fujitsu.xl.FCM.tokensave;
 import com.extralarge.fujitsu.xl.R;
 import com.extralarge.fujitsu.xl.UserSessionManager;
 
@@ -95,8 +93,11 @@ public class ReporterLogin extends AbsRuntimePermission implements View.OnClickL
 
 
         final String KEY_mobile = "mobile";
+        final String KEY_token = "token";
+
 
         sendotptxt = msendotptext.getText().toString().trim();
+        final String token = tokensave.getInstance(this).getDeviceToken();
 
         if (TextUtils.isEmpty(sendotptxt)) {
             msendotptext.requestFocus();
@@ -161,7 +162,8 @@ public class ReporterLogin extends AbsRuntimePermission implements View.OnClickL
                     //Adding parameters to request
 
                     params.put(KEY_mobile, sendotptxt);
-                  
+                    params.put(KEY_token, token);
+                  Log.d("tok00",token);
                     return params;
 
                 }

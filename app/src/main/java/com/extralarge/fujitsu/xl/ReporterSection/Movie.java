@@ -10,17 +10,19 @@ public class Movie {
     private String year;
     private String rating;
     private String  genre;
+    private String id;
 
     public Movie() {
     }
 
     public Movie(String name, String thumbnailUrl, String year, String rating,
-                 String genre) {
+                 String genre,String id) {
         this.title = name;
         this.thumbnailUrl = thumbnailUrl;
         this.year = year;
         this.rating = rating;
         this.genre = genre;
+        this.id = id;
     }
 
     public String getTitle() {
@@ -61,6 +63,14 @@ public class Movie {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

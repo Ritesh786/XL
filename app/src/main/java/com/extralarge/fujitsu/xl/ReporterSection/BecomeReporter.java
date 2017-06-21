@@ -122,7 +122,7 @@ private void registerUser() {
 
 
         final String KEY_mobile = "mobile";
-        final String KEY_name = "name";
+        final String KEY_name = "username";
         final String KEY_email = "email";
         final String KEY_gender = "gender";
         final String KEY_state = "state";

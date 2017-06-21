@@ -22,7 +22,8 @@ import java.util.List;
 
 public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.MyViewHolder> {
 
-    private List<Movie> movieItems;
+
+    private  List<Movie> movieItems;
     Context context;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 

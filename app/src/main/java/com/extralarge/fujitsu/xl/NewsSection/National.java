@@ -1,4 +1,4 @@
-package com.extralarge.fujitsu.xl.ReporterSection;
+package com.extralarge.fujitsu.xl.NewsSection;
 
 
 import android.app.ProgressDialog;
@@ -16,6 +16,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.extralarge.fujitsu.xl.R;
+import com.extralarge.fujitsu.xl.ReporterSection.AppController;
+import com.extralarge.fujitsu.xl.ReporterSection.CustomListAdapter;
+import com.extralarge.fujitsu.xl.ReporterSection.Movie;
+import com.extralarge.fujitsu.xl.ReporterSection.NewsDetailShow;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,12 +28,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class VerifiedNews extends Fragment implements AdapterView.OnItemClickListener {
+public class National extends Fragment implements AdapterView.OnItemClickListener{
 
-    private static final String TAG = VerifiedNews.class.getSimpleName();
+
+    private static final String TAG = National.class.getSimpleName();
 
     private ProgressDialog pDialog;
     private List<Movie> movieList = new ArrayList<Movie>();
@@ -41,7 +47,7 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
     String  type,headline,content,caption,image;
 
 
-    public VerifiedNews() {
+    public National() {
         // Required empty public constructor
     }
 
@@ -50,9 +56,7 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-
-        View view = inflater.inflate(R.layout.fragment_verified_news, container, false);
+        View view = inflater.inflate(R.layout.fragment_updates, container, false);
 
 
         listView = (ListView) view.findViewById(R.id.listvery);
@@ -71,8 +75,8 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
 
         // Creating volley request obj
 
-             populatedata();
-             listView.setOnItemClickListener(this);
+        populatedata();
+        listView.setOnItemClickListener(this);
 
         return view;
     }
@@ -80,21 +84,17 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
 
     public void populatedata(){
 
-        Bundle bundle = this.getArguments();
-        strtext = bundle.getInt("message",0);
-        Log.d("idv", String.valueOf(strtext));
+        final String url = "http://api.minews.in/slimapp/public/api/posts/approved/National";
 
-        final String url = "http://api.minews.in/slimapp/public/api/posts/user/approved/";
 
-        String newurl = url+strtext;
-
-        JsonArrayRequest movieReq = new JsonArrayRequest(newurl,
+        JsonArrayRequest movieReq = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, response.toString());
                         hidePDialog();
 
+                        // Parsing json
                         for (int i = 0; i < response.length(); i++) {
                             try {
 
@@ -122,6 +122,8 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
 
                         }
 
+                        // notifying list adapter about data changes
+                        // so that it renders the list view with updated data
                         adapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
@@ -157,12 +159,6 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-//        headline = movieList.get(movie.getTitle());
-//        type = obj.getString("type");
-//        content = obj.getString("content");
-//        caption = obj.getString("caption");
-//        image = obj.getString("image");
-
         Movie mo123 = (Movie) parent.getItemAtPosition(position);
 
         Intent newsdetailintnt = new Intent(getContext(),NewsDetailShow.class);
@@ -171,8 +167,10 @@ public class VerifiedNews extends Fragment implements AdapterView.OnItemClickLis
         newsdetailintnt.putExtra("content",mo123.getRating());
         newsdetailintnt.putExtra("image",mo123.getThumbnailUrl());
         newsdetailintnt.putExtra("id",mo123.getId());
-      //  newsdetailintnt.putExtra("caption",movie.);
+
         startActivity(newsdetailintnt);
 
+    }
+
+
 }
-        }

@@ -131,7 +131,7 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
 
             try
             {
-                if (senderNum.equals("HP-MITEST"))
+                if (senderNum.equals("VK-MITEST"))
                 {
                     recivedSms(messageBody);
                     mverifyotpbtn.performClick();
@@ -198,12 +198,9 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
                                     session.createUserLoginSession(name);
 
                                     Intent registerintent = new Intent(Verifyotp.this, ReporterDashboard.class);
-//                                    registerintent.putExtra("user_id",id);
-//                                   Log.d("user1234","inte"+id);
+//
                                     registerintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                                    // Add new Flag to start new Activity
-                                   // registerintent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                     startActivity(registerintent);
                                     finish();
 

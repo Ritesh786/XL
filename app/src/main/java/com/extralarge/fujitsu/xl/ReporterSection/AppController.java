@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.extralarge.fujitsu.xl.MainActivity;
 
 /**
  * Created by Fujitsu on 22/05/2017.
@@ -25,6 +26,7 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
     }
 
     public static synchronized AppController getInstance() {
