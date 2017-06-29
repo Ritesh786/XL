@@ -1,7 +1,9 @@
 package com.extralarge.fujitsu.xl;
 
-import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -11,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +26,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.extralarge.fujitsu.xl.FCM.tokensave;
+import com.extralarge.fujitsu.xl.FCM.MyFirebaseInstanceIDService;
+import com.extralarge.fujitsu.xl.FCM.TokenSave;
 import com.extralarge.fujitsu.xl.NewsSection.MainNews;
 import com.extralarge.fujitsu.xl.NewsSection.State;
 import com.extralarge.fujitsu.xl.ReporterSection.BecomeReporter;
@@ -33,25 +37,28 @@ import com.extralarge.fujitsu.xl.ReporterSection.ReporterLogin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AbsRuntimePermission {
+public class MainActivity extends AppCompatActivity {
 
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
     FragmentManager mFragmentManager;
     FragmentTransaction mFragmentTransaction;
     android.support.v7.widget.Toolbar toolbar;
+    private BroadcastReceiver broadcastReceiver;
+    String token;
 
     String name;
 
     UserSessionManager session;
-    private static final int REQUEST_PERMISSION = 10;
     int i = 0;
     static boolean f = true;
+  //  SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         session = new UserSessionManager(getApplicationContext());
         /**
@@ -61,15 +68,6 @@ public class MainActivity extends AbsRuntimePermission {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.navigationview);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        if(!prefs.getBoolean("firstTime", false)) {
-
-            SendtokenofNews();
-
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("firstTime", true);
-            editor.commit();
-        }
 
         /**
          * Lets inflate the very first fragment
@@ -113,45 +111,45 @@ public class MainActivity extends AbsRuntimePermission {
                     toolbar.setTitle("EXCEL");
                     toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
                 }
-
-                if (menuItem.getItemId() == R.id.nav_item_national) {
-                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new MainNews()).commit();
-                    toolbar.setTitle("राष्ट्रीय");
-                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
-
-                }
-
-                if (menuItem.getItemId() == R.id.nav_item_International) {
-                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
-                    toolbar.setTitle("International");
-                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
-
-                }
-
-                if (menuItem.getItemId() == R.id.nav_item_states) {
-                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
-                    toolbar.setTitle("States");
-                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
-
-                }
-                if (menuItem.getItemId() == R.id.nav_item_business) {
-                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
-                    toolbar.setTitle("Business");
-                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
-
-                }
-
-                if (menuItem.getItemId() == R.id.nav_item_city) {
-                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
-                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
-                    toolbar.setTitle("Cities");
-                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
-
-                }
+//
+//                if (menuItem.getItemId() == R.id.nav_item_national) {
+//                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
+//                    xfragmentTransaction.replace(R.id.containerView, new MainNews()).commit();
+//                    toolbar.setTitle("राष्ट्रीय");
+//                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
+//
+//                }
+//
+//                if (menuItem.getItemId() == R.id.nav_item_International) {
+//                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
+//                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
+//                    toolbar.setTitle("International");
+//                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
+//
+//                }
+//
+//                if (menuItem.getItemId() == R.id.nav_item_states) {
+//                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
+//                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
+//                    toolbar.setTitle("States");
+//                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
+//
+//                }
+//                if (menuItem.getItemId() == R.id.nav_item_business) {
+//                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
+//                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
+//                    toolbar.setTitle("Business");
+//                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
+//
+//                }
+//
+//                if (menuItem.getItemId() == R.id.nav_item_city) {
+//                    FragmentTransaction xfragmentTransaction = mFragmentManager.beginTransaction();
+//                    xfragmentTransaction.replace(R.id.containerView, new State()).commit();
+//                    toolbar.setTitle("Cities");
+//                    toolbar.setTitleTextColor(ContextCompat.getColor(MainActivity.this, R.color.black));
+//
+//                }
 
 
                 if (menuItem.getItemId() == R.id.nav_item_becomereporter) {
@@ -194,39 +192,35 @@ public class MainActivity extends AbsRuntimePermission {
 
         mDrawerToggle.syncState();
 
-        requestAppPermissions(new String[]{
 
-                                Manifest.permission.READ_SMS,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE},
-                        R.string.msg, REQUEST_PERMISSION);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
 
-//        if(i == 0){
-//
-//            Log.d("if00","abcd");
-//            SendtokenofNews();
-//        }
-//
-//        Log.d("ival001", String.valueOf(i));
+                token = TokenSave.getInstance(MainActivity.this).getDeviceToken();
+                Log.d("tok00",token);
 
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                if(!prefs.getBoolean("firstTime", false)) {
 
+                    SendtokenofNews();
+
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean("firstTime", true);
+                    editor.commit();
+                }
+
+            }
+        };
+
+        registerReceiver(broadcastReceiver,new IntentFilter(MyFirebaseInstanceIDService.TOKEN_BROADCAST));
 
         }
 
 
-
-
-    @Override
-    public void onPermissionsGranted(int requestCode) {
-
-    }
-
     public void SendtokenofNews() {
-
-
-        final String token = tokensave.getInstance(MainActivity.this).getDeviceToken();
+        
         final String LOGIN_URL = "http://api.minews.in/slimapp/public/api/readers/";
-
         String newurl = LOGIN_URL+token;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, newurl,
@@ -234,16 +228,13 @@ public class MainActivity extends AbsRuntimePermission {
                     @Override
                     public void onResponse(String response) {
                         Log.d("jaba",response.toString());
-                        Log.d("tok00",token);
+//
                         try {
                             JSONObject jsonresponse = new JSONObject(response);
                             boolean success = jsonresponse.getBoolean("success");
 
                             if(success){
-
                             }
-
-                            Log.d("ival00", String.valueOf(i));
 
                         } catch (JSONException e) {
                             e.printStackTrace();

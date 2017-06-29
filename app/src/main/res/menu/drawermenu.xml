@@ -19,25 +19,25 @@
         android:id="@+id/nav_item_uploadnews"
         />
 
-    <item android:title="@string/hindi"
-        android:id="@+id/nav_item_national"
-     />
+    <!--<item android:title="@string/hindi"-->
+        <!--android:id="@+id/nav_item_national"-->
+     <!--/>-->
 
-    <item android:title="International"
-        android:id="@+id/nav_item_International"
-       />
+    <!--<item android:title="International"-->
+        <!--android:id="@+id/nav_item_International"-->
+       <!--/>-->
 
-    <item android:title="States"
-        android:id="@+id/nav_item_states"
-        />
+    <!--<item android:title="States"-->
+        <!--android:id="@+id/nav_item_states"-->
+        <!--/>-->
 
-    <item android:title="Business"
-        android:id="@+id/nav_item_business"
-        />
+    <!--<item android:title="Business"-->
+        <!--android:id="@+id/nav_item_business"-->
+        <!--/>-->
 
-    <item android:title="Cities"
-        android:id="@+id/nav_item_city"
-        />
+    <!--<item android:title="Cities"-->
+        <!--android:id="@+id/nav_item_city"-->
+        <!--/>-->
 
 
 

@@ -1,12 +1,14 @@
 package com.extralarge.fujitsu.xl.ReporterSection;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,10 +21,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -55,7 +60,7 @@ import static com.extralarge.fujitsu.xl.R.id.verifyotp_btn;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DashboardFragment extends Fragment implements View.OnClickListener {
+public class DashboardFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
      EditText  mnewsheadline,mnewscontent,mnewsimagecaption;
      Spinner mnewstype;
@@ -64,6 +69,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
     int id;
     int strtext;
     private int PICK_IMAGE_REQUEST = 1;
+    private int CAMERA_REQUEST = 2;
 
     private Bitmap bitmap;
     Uri selectedImage;
@@ -104,20 +110,17 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         mchooseimagebtn.setOnClickListener(this);
         muploadnewsbtn.setOnClickListener(this);
 
-//        ReporterDashboard activity = (ReporterDashboard) getActivity();
-//         id = activity.getMyData();
-//        String iddd = String.valueOf(id);
-//        Log.d("main123", iddd);
+
+        String newstypr[] = {"","National","International","State","Business","Bollywood","Entertainment"};
+
+        mnewstype.setOnItemSelectedListener(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.autocomplete,newstypr);
+        mnewstype.setAdapter(adapter);
 
         return view;
     }
 
     private void showFileChooser() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//       startActivityForResult(intent,PICK_IMAGE_REQUEST);
-
 try {
     if (android.os.Build.VERSION.SDK_INT >= 23) {
 
@@ -139,62 +142,6 @@ try {
 }
 
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        try{
-        Log.d("try4",str);
-        super.onActivityResult(requestCode, resultCode, data);}catch (Exception e){
-            Log.d("try8",e.toString());
-            Toast.makeText(getContext(),"On super "+e.toString(),Toast.LENGTH_LONG).show();
-
-        }
-
-
-            //  Context context = getContext();
-
-          if(data==null){
-
-              Toast.makeText(getContext()," Please Select Image For Uploading.... ",Toast.LENGTH_LONG).show();
-
-          }
-
-            if (requestCode >= PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
-
-                Uri filePath = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), filePath);
-                    mnewsimage.setImageBitmap(bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-    }
-//            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-//
-//            Cursor cursor = getContext().getContentResolver().query(selectedImage,
-//                    filePathColumn, null, null, null);
-//            cursor.moveToFirst();
-//           Log.d("try1",str);
-//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//            String picturePath = cursor.getString(columnIndex);
-//            cursor.close();
-//            mnewsimage.setImageURI(selectedImage);
-//        }
-//
-//
-//           try {
-//               Log.d("try2",str);
-//               bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), selectedImage);
-//            } catch (IOException e) {
-//               e.printStackTrace();
-//           }}
-//        catch (Exception e){
-//
-//            Toast.makeText(getContext(),"On Activity "+e.toString(),Toast.LENGTH_LONG).show();
-//        }
 
 
 
@@ -315,37 +262,7 @@ try {
             requestQueue.add(stringRequest);
 
 
-//        class UploadImage extends AsyncTask<Void,Void,String> {
-//            ProgressDialog loading;
-//            @Override
-//            protected void onPreExecute() {
-//                super.onPreExecute();
-//                loading = ProgressDialog.show(getContext(),"Please wait...","Y Is Uploading",false,false);
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                loading.dismiss();
-//                Log.d("upload",s);
-//                Toast.makeText(getContext(),s, Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            protected String doInBackground(Void... params) {
-//                RequestHandler rh = new RequestHandler();
-//                HashMap<String,String> param = new HashMap<String,String>();
-//                param.put(KEY_HHEADLINE,headline);
-//                param.put(KEY_TYPE,type);
-//                param.put(KEY_CONTENT,content);
-//                param.put(KEY_IMAGE,image);
-//                param.put(KEY_CAPTION,caption);
-//                String result = rh.sendPostRequest(UPLOAD_URL, param);
-//                return result;
-//            }
-//        }
-//        UploadImage u = new UploadImage();
-//        u.execute();
+
         }catch (Exception e){
 
             Log.d("msg1234",e.toString());
@@ -358,13 +275,92 @@ try {
     public void onClick(View v) {
 
         if(v == mchooseimagebtn){
-            showFileChooser();
+
+            AlertDialog.Builder mbuilder = new AlertDialog.Builder(getContext());
+            View mview =getActivity().getLayoutInflater().inflate(R.layout.chooseimage, null);
+            TextView mtakephoto = (TextView) mview.findViewById(R.id.imagebycamera);
+            mtakephoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+                }
+            });
+
+            TextView mtakegallery = (TextView) mview.findViewById(R.id.imagebygallery);
+            mtakegallery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    showFileChooser();
+
+                }
+            });
+            mbuilder.setView(mview);
+            AlertDialog dialog = mbuilder.create();
+            dialog.show();
         }
+
         if(v == muploadnewsbtn){
             uploadImage();
         }
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try{
+            Log.d("try4",str);
+            super.onActivityResult(requestCode, resultCode, data);}catch (Exception e) {
+            Log.d("try8", e.toString());
+            Toast.makeText(getContext(), "On super " + e.toString(), Toast.LENGTH_LONG).show();
 
+        }
+
+        if(data==null){
+
+            Toast.makeText(getContext()," Please Select Image For Uploading.... ",Toast.LENGTH_LONG).show();
+
+        }
+
+        if (requestCode >= PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+
+            Uri filePath = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), filePath);
+                mnewsimage.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            bitmap = (Bitmap) data.getExtras().get("data");
+            mnewsimage.setImageBitmap(bitmap);
+        }
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        if(position < 1){
+            TextView errorText = (TextView)mnewstype.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);//just to highlight that this is an error
+            errorText.setText("Choose A News Type");//changes the selected item text to this
+
+        }
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

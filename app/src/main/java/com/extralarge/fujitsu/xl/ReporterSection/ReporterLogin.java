@@ -20,7 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.extralarge.fujitsu.xl.AbsRuntimePermission;
-import com.extralarge.fujitsu.xl.FCM.tokensave;
+import com.extralarge.fujitsu.xl.FCM.TokenSave;
 import com.extralarge.fujitsu.xl.R;
 import com.extralarge.fujitsu.xl.UserSessionManager;
 
@@ -51,9 +51,9 @@ public class ReporterLogin extends AbsRuntimePermission implements View.OnClickL
 
         requestAppPermissions(new String[]{
 
-                        Manifest.permission.READ_SMS},
+                        Manifest.permission.READ_SMS,
 //                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-////                                Manifest.permission.WRITE_CONTACTS},
+                               Manifest.permission.CAMERA},
                 R.string.msg, REQUEST_PERMISSION);
 
 
@@ -95,9 +95,8 @@ public class ReporterLogin extends AbsRuntimePermission implements View.OnClickL
         final String KEY_mobile = "mobile";
         final String KEY_token = "token";
 
-
         sendotptxt = msendotptext.getText().toString().trim();
-        final String token = tokensave.getInstance(this).getDeviceToken();
+        final String token = TokenSave.getInstance(this).getDeviceToken();
 
         if (TextUtils.isEmpty(sendotptxt)) {
             msendotptext.requestFocus();

@@ -46,7 +46,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/news_type"
             android:layout_below="@+id/passwordedtxt"
-            android:entries="@array/newstype_arrays"
             android:padding="10dp"
             ></Spinner>
     </LinearLayout>

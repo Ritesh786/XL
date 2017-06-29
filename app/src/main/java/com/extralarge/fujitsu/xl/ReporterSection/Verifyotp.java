@@ -128,10 +128,13 @@ public class Verifyotp extends AppCompatActivity implements View.OnClickListener
 
             String sender = smsMessage.getDisplayOriginatingAddress();
             String senderNum = sender ;
+            String asubstring = senderNum.substring(3);
+            Log.d("otp00","otp"+senderNum);
+            Log.d("otp0","otp123"+asubstring);
 
             try
             {
-                if (senderNum.equals("VK-MITEST"))
+                if (asubstring.equals("MITEST"))
                 {
                     recivedSms(messageBody);
                     mverifyotpbtn.performClick();

@@ -1,5 +1,6 @@
 package com.extralarge.fujitsu.xl.ReporterSection;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.extralarge.fujitsu.xl.AbsRuntimePermission;
 import com.extralarge.fujitsu.xl.MainActivity;
 import com.extralarge.fujitsu.xl.R;
 import com.squareup.picasso.Picasso;
@@ -26,7 +28,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class NewsDetailShow extends AppCompatActivity implements View.OnClickListener {
+public class NewsDetailShow extends AbsRuntimePermission implements View.OnClickListener {
 
     TextView mtype, mheadline, mcontent, mcaption;
     ImageView mnewsimmage, mbackimage, mshareimage;
@@ -34,6 +36,7 @@ public class NewsDetailShow extends AppCompatActivity implements View.OnClickLis
     URL url;
     Button mgobckbtn;
     Bitmap myBitmap;
+    private static final int REQUEST_PERMISSION = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,16 @@ public class NewsDetailShow extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    @Override
+    public void onPermissionsGranted(int requestCode) {
+
+        View v1 = getWindow().getDecorView().getRootView();
+        v1.setDrawingCacheEnabled(true);
+        myBitmap = v1.getDrawingCache();
+        saveBitmap(myBitmap);
+
+    }
+
     public void saveBitmap(Bitmap bitmap) {
         String filePath = Environment.getExternalStorageDirectory()
                 + File.separator + "Pictures/screenshot.png";
@@ -112,7 +125,7 @@ public class NewsDetailShow extends AppCompatActivity implements View.OnClickLis
         intent.setType("image/*");
 
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
-        intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "For Latest News Updates \n Download \n Excel Samachar App \n https://play.google.com/store/apps/details?id=midigi.testaws&hl=en");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         try {
             startActivity(Intent.createChooser(intent, "Share Screenshot"));
@@ -136,18 +149,12 @@ public class NewsDetailShow extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.share_image:
 
-//                Intent shareintent = new Intent(android.content.Intent.ACTION_SEND);
-//                shareintent.setType("text/plain");
-//                shareintent.putExtra(android.content.Intent.EXTRA_SUBJECT,"my app");
-//                shareintent.putExtra(android.content.Intent.EXTRA_TEXT,"http://minews.in/posts/"+id);
-//                startActivity(Intent.createChooser(shareintent,"Share News Via"));
-                View v1 = getWindow().getDecorView().getRootView();
-                // View v1 = iv.getRootView(); //even this works
-                // View v1 = findViewById(android.R.id.content); //this works too
-                // but gives only content
-                v1.setDrawingCacheEnabled(true);
-                myBitmap = v1.getDrawingCache();
-                saveBitmap(myBitmap);
+
+                requestAppPermissions(new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE},
+                        R.string.msg, REQUEST_PERMISSION);
+
                 break;
 
 

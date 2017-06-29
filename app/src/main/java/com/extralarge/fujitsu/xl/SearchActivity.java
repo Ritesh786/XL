@@ -66,17 +66,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-//        adapter = new CustomListAdapter(getContext(), movieList);
-        // listView.setAdapter(adapter);
+
         adapter = new RecycleAdapter(movieList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(SearchActivity.this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        // recyclerView.getItemAnimator().setChangeDuration(0);
-
-        // adapter.getItemAnimator().setSupportsChangeAnimations(false);
 
 
     }
@@ -94,6 +90,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.search_image:
 
+                movieList.clear();
                 searchbar();
 
                 break;
@@ -142,15 +139,6 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                                 movie.setYear(obj.getString("category"));
                                 movie.setGenre(obj.getString("created_at"));
 
-                                // Genre is json array  (Number) obj.get("type")
-//                                JSONArray genreArry = obj.getJSONArray("created");
-//                                ArrayList<String> genre = new ArrayList<String>();
-//                                for (int j = 0; j < genreArry.length(); j++) {
-//                                    genre.add((String) genreArry.get(j));
-//                                }
-//                                movie.setGenre(genre);
-
-                                // adding movie to movies array
                                 movieList.add(movie);
 
 
@@ -160,10 +148,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
                         }
 
-                        // notifying list adapter about data changes
-                        // so that it renders the list view with updated data
+
                         adapter.notifyDataSetChanged();
-                        //  adapter.setHasStableIds(true);
+
                     }
                 }, new Response.ErrorListener() {
             @Override
